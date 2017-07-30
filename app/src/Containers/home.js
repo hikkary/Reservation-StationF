@@ -5,12 +5,19 @@ import { Banner } from '../Components/Banner';
 import { Searchbar } from '../Components/Searchbar';
 import { FiltersMenu } from '../Components/FiltersMenu';
 import { RoomsList } from '../Components/RoomsList';
-
+import data from '../Data/rooms.json';
 import './styles.css';
 
 class Home extends Component {
+	state = {
+		data: data
+	}
 	componentDidMount(){
 		console.log('yeah');
+		console.log(this.state.data);
+		this.state.data.rooms.forEach((ace) =>{
+			console.log(ace);
+		})
 	}
 
 	handleSearchInput(text){
