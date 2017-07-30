@@ -1,0 +1,13 @@
+.home{
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.rooms{
+	margin-top: 5px;
+	display: flex;
+	flex: 1;
+	height: auto;
+	background-color: green;
+}

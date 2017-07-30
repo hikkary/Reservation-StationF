@@ -1,0 +1,21 @@
+.header {
+	height : 60px;
+}
+
+.logo{
+	line-height: 60px;
+	width: 140px;
+	background-color: #000000;
+}
+
+.logo :hover{
+	transition: 0.2s;
+	cursor: pointer;
+	background-color: #ff00ae;
+}
+
+.logo p{
+	text-align: center;
+	color: white;
+	margin: 0;
+}
