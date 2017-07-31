@@ -8,3 +8,21 @@
 .filtersMenuTitle{
 	text-align: center;
 }
+
+.choice{
+	display: flex;
+	flex-direction: row;
+	height: 50px;
+	line-height: 50px;
+	text-align: center;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.checkBox{
+	flex: 3;
+}
+
+.checkBoxTitle{
+	flex: 7;
+}

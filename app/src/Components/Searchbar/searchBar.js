@@ -6,7 +6,7 @@ import './style.css';
 
 const Searchbar = ({onKeyDown}) => (
 	<div className="searchBar">
-		<SearchInput onKeyDown={onKeyDown}/>
+		<SearchInput onKeyDown={onKeyDown.bind(this)}/>
 	</div>
 );
 

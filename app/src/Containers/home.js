@@ -10,18 +10,30 @@ import './styles.css';
 
 class Home extends Component {
 	state = {
-		data: data
-	}
-	componentDidMount(){
-		console.log('yeah');
-		console.log(this.state.data);
-		this.state.data.rooms.forEach((ace) =>{
-			console.log(ace);
-		})
+		data: data,
+		filter:{
+			name:'',
+			equipments:[],
+		}
 	}
 
-	handleSearchInput(text){
-		console.log('input text',text.target.value);
+	componentDidMount(){
+	}
+
+
+	handleSearchInput = (text) => {
+		this.setState({filter: {...this.state.filter, name: text.target.value}})
+		console.log(this.state.filter);
+		console.log(this.state.filter.name);
+	}
+
+	handleSubmit = (form) =>{
+		form.preventDefault();
+		console.log(form.target.name);
+	}
+
+	handleClickCheckBox = (checkBox) =>{
+		console.log(checkBox);
 	}
 
 	render(){
@@ -29,11 +41,12 @@ class Home extends Component {
 			<div className="home">
 			<Header />
 			<Banner />
-			<Searchbar onKeyDown={this.handleSearchInput}/>
-				<div className="rooms">
-					<FiltersMenu/>
-					<RoomsList/>
-				</div>
+			<Searchbar onKeyDown={this.handleSearchInput.bind(this)}/>
+				{this.state.data.rooms &&
+					<div className="rooms">
+					<FiltersMenu filters={this.state.data.rooms} onClick={this.handleClickCheckBox} onSubmit={this.handleSubmit}/>
+					<RoomsList rooms={this.state.data.rooms} filter={this.state.filter}/>
+				</div>}
 		  </div>
 		)
 	}
