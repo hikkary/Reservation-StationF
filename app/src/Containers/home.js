@@ -5,6 +5,7 @@ import { Banner } from '../Components/Banner';
 import { Searchbar } from '../Components/Searchbar';
 import { FiltersMenu } from '../Components/FiltersMenu';
 import { RoomsList } from '../Components/RoomsList';
+import _ from 'lodash';
 import data from '../Data/rooms.json';
 import './styles.css';
 
@@ -29,11 +30,14 @@ class Home extends Component {
 
 	handleSubmit = (form) =>{
 		form.preventDefault();
-		console.log(form.target.name);
 	}
 
 	handleClickCheckBox = (checkBox) =>{
-		console.log(checkBox);
+		let newFilter = [];
+		newFilter.push(this.state.filter.equipments);
+		newFilter.push(checkBox.target.value);
+		newFilter = _.flatten(newFilter);
+		this.setState({filter: {...this.state.filter, equipments: newFilter}})
 	}
 
 	render(){

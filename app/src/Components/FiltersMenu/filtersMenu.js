@@ -20,21 +20,21 @@ const filterParser = (filters) => {
 	return(filterTab)
 }
 
-const filterCreator = (filters) =>{
+const filterCreator = (filters, onClick) =>{
 	const allFilters = filterParser(filters)
 	const finalFilters = allFilters.map((filter, key)=>{
-		return <CheckBox data={filter} key={key}/>
+		return <CheckBox data={filter} key={key} onClick={onClick}/>
 	})
 	return finalFilters;
 }
 
-const FiltersMenu = ({filters, onSubmit}) => {
+const FiltersMenu = ({filters, onSubmit, onClick}) => {
 	return(
 		<div className="filtersMenu">
 			<div className="filtersMenuTitle">
 				{/* <p>{FILTERS_MENU_TITLE}</p> */}
 				<form type="submit" onSubmit={onSubmit}>
-					{filterCreator(filters)}
+					{filterCreator(filters, onClick)}
 					<input type="submit"/>
 				</form>
 			</div>
@@ -43,6 +43,7 @@ const FiltersMenu = ({filters, onSubmit}) => {
 FiltersMenu.propTypes = {
 	filters: PropTypes.array,
 	onSubmit: PropTypes.func,
+	onClick: PropTypes.func,
 }
 
 export default FiltersMenu;
