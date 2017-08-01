@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 
 const PLACEHOLDER = "Recherchez une salle";
 
-const SearchInput = ({onKeyDown}) => (
-	<input className="searchInput" name='searchInput' type="text" onKeyDown={onKeyDown.bind(this)} placeholder={PLACEHOLDER}></input>
+const SearchInput = ({onKeyUp}) => (
+	<input className="searchInput" name='searchInput' type="text" onKeyUp={onKeyUp.bind(this)} maxLength="20" placeholder={PLACEHOLDER}></input>
 );
 
 SearchInput.propTypes = {
-	onKeyDown: PropTypes.func,
+	onKeyUp: PropTypes.func,
 }
 
 export default SearchInput;

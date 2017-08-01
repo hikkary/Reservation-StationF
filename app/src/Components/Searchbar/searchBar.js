@@ -4,14 +4,14 @@ import SearchInput from './searchInput';
 
 import './style.css';
 
-const Searchbar = ({onKeyDown}) => (
+const Searchbar = ({onKeyUp}) => (
 	<div className="searchBar">
-		<SearchInput onKeyDown={onKeyDown.bind(this)}/>
+		<SearchInput onKeyUp={onKeyUp.bind(this)}/>
 	</div>
 );
 
 Searchbar.propTypes = {
-	onKeyDown: PropTypes.func,
+	onKeyUp: PropTypes.func,
 }
 
 export default Searchbar;
