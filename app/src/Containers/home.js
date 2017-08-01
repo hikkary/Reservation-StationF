@@ -25,7 +25,7 @@ class Home extends Component {
 	handleClickCheckBox =  (checkBox) =>{
 		let newFilter = [];
 		const { checked, value } = checkBox.target;
-		newFilter.push(this.state.filter.equipments);
+		newFilter.push(this.state.filter.equipments); // Add the previous filters
 		if (checked){ // Add filter
 			newFilter.push({name: checkBox.target.value});
 			newFilter = _.flatten(newFilter);
@@ -56,7 +56,7 @@ class Home extends Component {
 			<Searchbar onKeyUp={this.handleSearchInput.bind(this)}/>
 				{this.state.data.rooms &&
 					<div className="rooms">
-					<FiltersMenu filters={this.state.data.rooms} onClick={this.handleClickCheckBox} onSubmit={this.handleSubmit}/>
+					<FiltersMenu filters={this.state.data.rooms} onClick={this.handleClickCheckBox}/>
 					<RoomsList rooms={this.state.data.rooms} filter={this.state.filter}/>
 				</div>}
 		  </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import moment from 'moment';
 import CheckBox from './checkBox';
 import './style.css';
 
@@ -21,6 +22,7 @@ const filterParser = (filters) => {
 }
 
 const filterCreator = (filters, onClick) =>{
+	console.log(moment().format('YYYY-MM-DD'));
 	const allFilters = filterParser(filters)
 	const finalFilters = allFilters.map((filter, key)=>{
 		return <CheckBox data={filter} key={key} onClick={onClick}/>
@@ -32,8 +34,9 @@ const FiltersMenu = ({filters, onSubmit, onClick}) => {
 	return(
 		<div className="filtersMenu">
 			<div className="filtersMenuTitle">
-				{/* <p>{FILTERS_MENU_TITLE}</p> */}
-				<form type="submit" onSubmit={onSubmit}>
+
+				<form type="submit">
+					<input type='date' min={moment().format('YYYY-MM-DD')} max={moment().add('2','month').format('YYYY-MM-DD')} defaultValue={moment().format('YYYY-MM-DD')} />
 					{filterCreator(filters, onClick)}
 					<input type="submit"/>
 				</form>
@@ -42,7 +45,6 @@ const FiltersMenu = ({filters, onSubmit, onClick}) => {
 
 FiltersMenu.propTypes = {
 	filters: PropTypes.array,
-	onSubmit: PropTypes.func,
 	onClick: PropTypes.func,
 }
 
