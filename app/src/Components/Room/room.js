@@ -17,7 +17,7 @@ const listEquipment = (equipements) => {
 	return(stringEquipments || EQUIPMENT);
 }
 
-const Room = ({room}) =>(
+const Room = ({room, onClick}) =>(
 	<div className="room">
 		<div className="pictureRoom"></div>
 		<div className="infoRoom">
@@ -26,7 +26,7 @@ const Room = ({room}) =>(
 			<p className="roomCapacity">{room.capacity} {CAPACITY}</p>
 			<div className="lastLine">
 			<p className="roomEquipment">{listEquipment(room.equipements)}</p>
-			<div className="book">{BOOK}</div>
+			<div className="book" id={room.name} onClick={onClick}>{BOOK}</div>
 			</div>
 		</div>
 	</div>
@@ -34,6 +34,7 @@ const Room = ({room}) =>(
 
 Room.propTypes = {
 	room: PropTypes.object,
+	onClick: PropTypes.func,
 }
 
 export default Room;

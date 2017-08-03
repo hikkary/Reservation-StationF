@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import axios from 'axios';
 import { Component } from 'react';
 import { Header } from '../Components/Header';
 import { Banner } from '../Components/Banner';
@@ -7,15 +8,16 @@ import { Searchbar } from '../Components/Searchbar';
 import { FiltersMenu } from '../Components/FiltersMenu';
 import { RoomsList } from '../Components/RoomsList';
 import _ from 'lodash';
-import data from '../Data/rooms.json';
+// import data from '../Data/rooms.json';
 import './styles.css';
 
 class Home extends Component {
 	state = {
-		data: data,
+		data: null,
 		primaryHour: null,
 		secondHour: null,
 		date: null,
+		roomName: null,
 		filter:{
 			name:'',
 			equipments:[],
@@ -24,6 +26,10 @@ class Home extends Component {
 
 	componentDidMount(){
 		this.getDateOnLoad();
+		axios.get('http://localhost:8080/api/rooms').then(({data}) => {
+			this.setState({data})
+		})
+
 	}
 
 	// Activate when a CheckBox is clicked
@@ -90,17 +96,66 @@ class Home extends Component {
 			})
 		}
 
+		createBookObject = (book) => {
+			const { primaryHour, secondHour, date, roomName} = book;
+			if (!primaryHour || !secondHour || !date || !roomName) return false;
+			const bookObject = {
+				primaryHour,
+				secondHour,
+				date,
+				roomName,
+				user: 'Roger',
+			};
+			console.log('Book object',bookObject);
+			return bookObject;
+		}
+
+		bookRoom = (room) =>{
+			// console.log(room.target.id);
+			this.setState({roomName: room.target.id}, () =>{
+				// console.log(this.state);
+				// console.log(JSON.stringify({ rooms: this.state.data.rooms}));
+				let confirm = window.confirm(`Voulez vous Reserver ${this.state.roomName} de ${this.state.primaryHour}H a ${this.state.secondHour}H  le ${this.state.date} ?`)
+				if (confirm === true) {
+					const bookObject = this.createBookObject(this.state);
+					const newRoomsTab = this.state.data.rooms.map((r) =>{
+						console.log(typeof(r));
+						if (r.name === this.state.roomName) {
+								if(!r.book){
+									r = {...r, book: []}
+								}
+								r.book.push(bookObject);
+								// r = {...r, book: bookObject}
+						}
+						return r
+					});
+					console.log('Room Tab',newRoomsTab);
+					this.setState({data: {rooms: newRoomsTab}}, () => {
+						console.log(this.state.data);
+					})
+				} else {
+					console.log('OH NO');
+				}
+			})
+
+
+		}
+
 	render(){
+		const { primaryHour, secondHour, date} = this.state;
 		return(
 			<div className="home">
 			<Header />
 			<Banner />
 			<Searchbar onKeyUp={this.handleSearchInput.bind(this)}/>
-				{this.state.data.rooms &&
+				{this.state.data && this.state.data.rooms &&
 					<div className="rooms">
 					<FiltersMenu filters={this.state.data.rooms} getHours={this.getHours} getDate={this.getDate}  onClick={this.handleClickCheckBox}/>
-					<RoomsList rooms={this.state.data.rooms} filter={this.state.filter}/>
+					<RoomsList onClick={this.bookRoom} rooms={this.state.data.rooms} currentTime={{primaryHour, secondHour, date}} filter={this.state.filter}/>
 				</div>}
+				{this.state.data && !this.state.data.rooms &&
+					 <p className="noRooms">No rooms Found</p>
+				}
 		  </div>
 		)
 	}
