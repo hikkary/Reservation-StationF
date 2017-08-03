@@ -130,6 +130,12 @@ class Home extends Component {
 						return r
 					});
 					console.log('Room Tab',newRoomsTab);
+					// axios({
+					// 	method: 'PUT',
+					// 	url: 'http://localhost:8080/api/rooms',
+					// 	data: newRoomsTab,
+					// }).then((result)=> )
+					//
 					this.setState({data: {rooms: newRoomsTab}}, () => {
 						console.log(this.state.data);
 					})

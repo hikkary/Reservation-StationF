@@ -40,25 +40,25 @@ const isBooked = (room, currentTime) => {
 			if (!room.book) return true;
 			else if(room.book){
 				let checkIfBookedTab = room.book.filter((oneBook) => {
-					console.log('ONE BOOOOOOK',oneBook);
+					// console.log('ONE BOOOOOOK',oneBook);
 					if(oneBook.date === currentTime.date){
-						console.log('sameDate');
+						// console.log('sameDate');
 						if(oneBook.primaryHour > currentTime.primaryHour && oneBook.primaryHour < currentTime.secondHour){
-							console.log(' SAME hour');
+							// console.log(' SAME hour');
 							return true;
 						}
 						if(oneBook.secondHour > currentTime.primaryHour && oneBook.secondHour < currentTime.secondHour){
-							console.log(' SAME hour 2');
+							// console.log(' SAME hour 2');
 							return true;
 						}
 						if(oneBook.primaryHour === currentTime.primaryHour && oneBook.secondHour === currentTime.secondHour){
-							console.log(' SAME hour 3');
+							// console.log(' SAME hour 3');
 							return true;
 						}
 					}
 					return false
 				})
-				console.log('CHECK TAB',checkIfBookedTab);
+				// console.log('CHECK TAB',checkIfBookedTab);
 				if(checkIfBookedTab.length !== 0) return false;
 				else { return true }
 			}
