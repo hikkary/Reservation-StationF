@@ -18,7 +18,8 @@ class FiltersMenu extends Component {
 	}
 
 		componentDidMount(){
-			this.setState({secondBookingHourStart: this.timePicker() + 1, secondBookingHour: this.timePicker() + 1} ,() =>{
+			const { selectedDate } = this.props;
+			this.setState({secondBookingHourStart: this.timePicker(selectedDate) + 1, secondBookingHour: this.timePicker(selectedDate) + 1} ,() =>{
 				this.props.getHours(this.timePicker(), this.state.secondBookingHour)
 
 			})
@@ -45,17 +46,24 @@ class FiltersMenu extends Component {
 	}
 
 
-	 timePicker = () => {
+	 timePicker = (selectedDate) => {
 			const whatHourIsIt = moment().format('HH')
-			if(Number(whatHourIsIt) >= 18 || Number(whatHourIsIt) < 8 ){
-				return 8;
+			const whatDayIsIt = moment().format('YYYY-MM-DD')
+			// console.log(whatHourIsIt);
+			// console.log(selectedDate);
+			// console.log(whatDayIsIt);
+			// console.log(moment(whatDayIsIt, "YYYY-MM-DD").fromNow());
+			if(Number(whatHourIsIt) >= 18 || Number(whatHourIsIt) < 8 || selectedDate !== whatDayIsIt ){
+						return 8;
 			} else {
-				return Number(moment().add('1', 'hours').format('HH')+'H');
+				return Number(moment().add('1', 'hours').format('HH'));
 			}
 	}
 
-	 firstSelectCreator = () =>{
-		const whatTimeIsIt = this.timePicker();
+	 firstSelectCreator = (selectedDate) =>{
+		//  console.log(selectedDate);
+		const whatTimeIsIt = this.timePicker(selectedDate);
+		// console.log('selectCreator',whatTimeIsIt);
 		const timeArray = [];
 		 for (let i = whatTimeIsIt; i <= 19; i++){
 			timeArray.push(<option key={i} value={i} >{i}H</option>)
@@ -64,6 +72,7 @@ class FiltersMenu extends Component {
 	}
 
 	secondSelectCreator = (time) => {
+		console.log("SECN TIME CREATOR",time);
 		const timeArray = [];
 		for (let i = time; i <= 20; i++){
 		 	timeArray.push(<option key={i} value={i} >{i}H</option>)
@@ -91,8 +100,8 @@ class FiltersMenu extends Component {
 
 
 	render(){
-		const {filters, onClick, getDate} = this.props
-		const firstSelect = this.firstSelectCreator();
+		const {filters, onClick, getDate, selectedDate} = this.props
+		const firstSelect = this.firstSelectCreator(selectedDate);
 		const secondSelect = this.secondSelectCreator(this.state.secondBookingHourStart);
 	return(
 		<div className="filtersMenu">
@@ -120,6 +129,7 @@ FiltersMenu.propTypes = {
 	onClick: PropTypes.func,
 	getHours: PropTypes.func,
 	getDate: PropTypes.func,
+	selectedDate: PropTypes.string,
 }
 
 export default FiltersMenu;

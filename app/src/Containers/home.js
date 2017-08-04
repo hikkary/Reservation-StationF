@@ -27,6 +27,7 @@ class Home extends Component {
 	componentDidMount(){
 		this.getDateOnLoad();
 		axios.get('http://localhost:8080/api/rooms').then(({data}) => {
+			console.log(data);
 			this.setState({data})
 		})
 
@@ -76,16 +77,20 @@ class Home extends Component {
 
 		todayOrTommorow = () => {
 			const whatHourIsIt = moment().format('HH');
+			// console.log('what ', whatHourIsIt);
 			if(Number(whatHourIsIt) >= 18){ // after 18h we cannot book for the present day
+				// console.log('day after');
 				return moment().add('1', 'days').format('YYYY-MM-DD');
 			} else { // else we can book the present day
+				// console.log('this day');
+
 				return moment().format('YYYY-MM-DD');
 			}
 		}
 
 		getDateOnLoad = () => {
 			this.setState({date: this.todayOrTommorow()}, ()=>{
-				console.log(this.state);
+				console.log('date', this.state);
 			})
 		}
 
@@ -143,7 +148,7 @@ class Home extends Component {
 						}}
 					}).then((result)=> {
 						console.log(result);
-						this.setState({data: {rooms: newRoomsTab}}, () => {
+						this.setState({data: {rooms: result.data.data.rooms}}, () => {
 							console.log(this.state.data);
 						});
 					})
@@ -166,7 +171,7 @@ class Home extends Component {
 			<Searchbar onKeyUp={this.handleSearchInput.bind(this)}/>
 				{this.state.data && this.state.data.rooms &&
 					<div className="rooms">
-					<FiltersMenu filters={this.state.data.rooms} getHours={this.getHours} getDate={this.getDate}  onClick={this.handleClickCheckBox}/>
+					<FiltersMenu filters={this.state.data.rooms} selectedDate={this.state.date} getHours={this.getHours} getDate={this.getDate}  onClick={this.handleClickCheckBox}/>
 					<RoomsList onClick={this.bookRoom} rooms={this.state.data.rooms} currentTime={{primaryHour, secondHour, date}} filter={this.state.filter}/>
 				</div>}
 				{this.state.data && !this.state.data.rooms &&

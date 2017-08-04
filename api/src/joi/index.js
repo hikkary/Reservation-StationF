@@ -1,5 +1,3 @@
-import Joi from 'joi';
+import RoomBooking from './roomBooking';
 
-const roomBooking = Joi.object().keys({
-	
-})
+export { RoomBooking };
