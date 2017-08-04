@@ -55,6 +55,10 @@ const isBooked = (room, currentTime) => {
 							// console.log(' SAME hour 3');
 							return true;
 						}
+						if(oneBook.primaryHour <= currentTime.primaryHour && oneBook.secondHour >= currentTime.secondHour){
+							// console.log(' SAME hour 3');
+							return true;
+						}
 					}
 					return false
 				})

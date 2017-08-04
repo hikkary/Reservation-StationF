@@ -130,15 +130,25 @@ class Home extends Component {
 						return r
 					});
 					console.log('Room Tab',newRoomsTab);
-					// axios({
-					// 	method: 'PUT',
-					// 	url: 'http://localhost:8080/api/rooms',
-					// 	data: newRoomsTab,
-					// }).then((result)=> )
-					//
-					this.setState({data: {rooms: newRoomsTab}}, () => {
-						console.log(this.state.data);
+					axios({
+						method: 'PUT',
+						url: 'http://localhost:8080/api/rooms',
+						data: {
+							allRooms : {rooms: newRoomsTab},
+						 bookRequest: {
+							primaryHour: this.state.primaryHour,
+							secondHour: this.state.secondHour,
+							date: this.state.date,
+							roomName: this.state.roomName,
+						}}
+					}).then((result)=> {
+						console.log(result);
+						this.setState({data: {rooms: newRoomsTab}}, () => {
+							console.log(this.state.data);
+						});
 					})
+
+
 				} else {
 					console.log('OH NO');
 				}

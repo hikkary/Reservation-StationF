@@ -1,4 +1,5 @@
 import data from '../data/rooms.json';
+// import data from '../data/test.json';
 
 const getRooms = (req, res) => {
 	const { rooms } = data;

@@ -1,3 +1,4 @@
 import getRooms from './getRooms';
+import newBook from './newBook';
 
-export { getRooms };
+export { getRooms, newBook };
