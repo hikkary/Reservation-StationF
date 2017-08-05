@@ -154,7 +154,7 @@ const newBook = (req, res) => {
 	//Verifier que la date est ok, regle : date inferieur a date actuelle est horaire inferieur a horaire actuelle
 	// console.log(req.body.bookRequest);
 	if (checkDateRequest(bookRequest) === false) return res.send({ status: 400, statusText: 'Bad Date', data: data });
-	if (checkBookRequest(bookRequest) === false) return res.send({ status: 490, statusText: 'Conflict, reservation Impossible', data: data });
+	if (checkBookRequest(bookRequest) === false) return res.send({ status: 409, statusText: 'Conflict, reservation Impossible', data: data });
 	else {
 		const newData = insertNewBook(bookRequest);
 		const path = process.cwd();

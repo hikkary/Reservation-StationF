@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import axios from 'axios';
 import { Component } from 'react';
+import { Popup } from '../Components/Popup' ;
 import { Header } from '../Components/Header';
 import { Banner } from '../Components/Banner';
 import { Searchbar } from '../Components/Searchbar';
@@ -18,6 +19,7 @@ class Home extends Component {
 		secondHour: null,
 		date: null,
 		roomName: null,
+		popupExists: false,
 		filter:{
 			name:'',
 			equipments:[],
@@ -115,48 +117,39 @@ class Home extends Component {
 			return bookObject;
 		}
 
-		bookRoom = (room) =>{
+
+		newBook = () =>{
+
+				axios({
+					method: 'PUT',
+					url: 'http://localhost:8080/api/rooms',
+					data: {
+					 bookRequest: {
+						primaryHour: this.state.primaryHour,
+						secondHour: this.state.secondHour,
+						date: this.state.date,
+						roomName: this.state.roomName,
+					}}
+				}).then((result)=> {
+					console.log(result);
+					//Gerer les message d'erreurs
+					this.setState({data: {rooms: result.data.data.rooms}, popupExists: false}, () => {
+						console.log(this.state.data);
+					});
+				})
+		}
+
+		cancelPopup = () => {
+			this.setState({popupExists : false})
+		}
+
+		popupBook = (room) =>{
 			// console.log(room.target.id);
-			this.setState({roomName: room.target.id}, () =>{
+			const sentence = <div>Voulez vous Reserver {this.state.roomName} de {this.state.primaryHour}H a {this.state.secondHour}H  le {this.state.date} ?</div>
+			this.setState({roomName: room.target.id, sentence ,popupExists: true}, () =>{
 				// console.log(this.state);
 				// console.log(JSON.stringify({ rooms: this.state.data.rooms}));
-				let confirm = window.confirm(`Voulez vous Reserver ${this.state.roomName} de ${this.state.primaryHour}H a ${this.state.secondHour}H  le ${this.state.date} ?`)
-				if (confirm === true) {
-					const bookObject = this.createBookObject(this.state);
-					const newRoomsTab = this.state.data.rooms.map((r) =>{
-						console.log(typeof(r));
-						if (r.name === this.state.roomName) {
-								if(!r.book){
-									r = {...r, book: []}
-								}
-								r.book.push(bookObject);
-								// r = {...r, book: bookObject}
-						}
-						return r
-					});
-					console.log('Room Tab',newRoomsTab);
-					axios({
-						method: 'PUT',
-						url: 'http://localhost:8080/api/rooms',
-						data: {
-							allRooms : {rooms: newRoomsTab},
-						 bookRequest: {
-							primaryHour: this.state.primaryHour,
-							secondHour: this.state.secondHour,
-							date: this.state.date,
-							roomName: this.state.roomName,
-						}}
-					}).then((result)=> {
-						console.log(result);
-						this.setState({data: {rooms: result.data.data.rooms}}, () => {
-							console.log(this.state.data);
-						});
-					})
 
-
-				} else {
-					console.log('OH NO');
-				}
 			})
 
 
@@ -166,13 +159,16 @@ class Home extends Component {
 		const { primaryHour, secondHour, date} = this.state;
 		return(
 			<div className="home">
+				{ this.state.popupExists &&
+					<Popup newBook={this.newBook} cancelPopup={this.cancelPopup} sentence={this.state.sentence}/>
+			}
 			<Header />
 			<Banner />
 			<Searchbar onKeyUp={this.handleSearchInput.bind(this)}/>
 				{this.state.data && this.state.data.rooms &&
 					<div className="rooms">
 					<FiltersMenu filters={this.state.data.rooms} selectedDate={this.state.date} getHours={this.getHours} getDate={this.getDate}  onClick={this.handleClickCheckBox}/>
-					<RoomsList onClick={this.bookRoom} rooms={this.state.data.rooms} currentTime={{primaryHour, secondHour, date}} filter={this.state.filter}/>
+					<RoomsList onClick={this.popupBook} rooms={this.state.data.rooms} currentTime={{primaryHour, secondHour, date}} filter={this.state.filter}/>
 				</div>}
 				{this.state.data && !this.state.data.rooms &&
 					 <p className="noRooms">No rooms Found</p>

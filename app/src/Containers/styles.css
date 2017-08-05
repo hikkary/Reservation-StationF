@@ -11,3 +11,35 @@
 	height: auto;
 	background-color: green;
 }
+
+.popupContainer{
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0,0,0, 0.4);
+	z-index: 3;
+}
+
+.popup{
+	width: 50%;
+	height: 30%;
+	background-color: white;
+	border-radius: 15px;
+}
+
+.yesButton, .noButton {
+	width: 60px;
+	height: 30px;
+	background-color: blue;
+	margin: 5px;
+	border-radius: 10px;
+	text-align: center;
+	line-height: 30px;
+}
+
+.noButton:hover, .yesButton:hover{
+	cursor: pointer;
+}
