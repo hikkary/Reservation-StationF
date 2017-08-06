@@ -23,6 +23,7 @@ class Home extends Component {
 		filter:{
 			name:'',
 			equipments:[],
+			capacity: 99,
 		}
 	}
 
@@ -30,7 +31,9 @@ class Home extends Component {
 		this.getDateOnLoad();
 		axios.get('http://localhost:8080/api/rooms').then(({data}) => {
 			console.log(data);
-			this.setState({data})
+			this.setState({data, capacity: this.maxCapacity()}, ()=>{
+
+			})
 		})
 
 	}
@@ -145,15 +148,42 @@ class Home extends Component {
 
 		popupBook = (room) =>{
 			// console.log(room.target.id);
-			const sentence = <div>Voulez vous Reserver {this.state.roomName} de {this.state.primaryHour}H a {this.state.secondHour}H  le {this.state.date} ?</div>
-			this.setState({roomName: room.target.id, sentence ,popupExists: true}, () =>{
+			this.setState({roomName: room.target.id}, () =>{
+				const sentence = <div className="textPopup">Voulez vous Reserver&nbsp;<div className="roomName"> {this.state.roomName}&nbsp;</div> de&nbsp;<div className="textHour">{this.state.primaryHour}H&nbsp;</div> a&nbsp;<div className="textHour">{this.state.secondHour}H&nbsp;</div>  le&nbsp;<div className="textHour">{this.state.date}</div> ?</div>
+				this.setState({popupExists: true, sentence})
 				// console.log(this.state);
 				// console.log(JSON.stringify({ rooms: this.state.data.rooms}));
-
 			})
-
-
 		}
+
+		minCapacity = () =>{
+			if(this.state.data){
+			const max = this.state.data.rooms.map((room) => room.capacity)
+			_.sortBy(max)
+			return Number(_.head(max))
+			}
+			return 0
+		}
+
+		onRangeChange = (range) =>{
+			// console.log(range.target.value);
+			this.setState({filter: {...this.state.filter, capacity: Number(range.target.value)}})
+		}
+
+		// initialRangeChange = (range) =>{
+		// 	this.setState({capacity: this.maxCapacity()})
+		// }
+
+		maxCapacity = () =>{
+			if(this.state.data){
+			const max = this.state.data.rooms.map((room) => room.capacity)
+			_.sortBy(max)
+			return Number(_.last(max))
+			}
+			// this.maxCapacity()
+			// return 0;
+		}
+
 
 	render(){
 		const { primaryHour, secondHour, date} = this.state;
@@ -167,7 +197,7 @@ class Home extends Component {
 			<Searchbar onKeyUp={this.handleSearchInput.bind(this)}/>
 				{this.state.data && this.state.data.rooms &&
 					<div className="rooms">
-					<FiltersMenu filters={this.state.data.rooms} selectedDate={this.state.date} getHours={this.getHours} getDate={this.getDate}  onClick={this.handleClickCheckBox}/>
+					<FiltersMenu filters={this.state.data.rooms} selectedDate={this.state.date} getHours={this.getHours} getDate={this.getDate}  onClick={this.handleClickCheckBox} maxCapacity={this.maxCapacity()} minCapacity={this.minCapacity()} onRangeChange={this.onRangeChange} currentCapacity={this.state.filter.capacity} />
 					<RoomsList onClick={this.popupBook} rooms={this.state.data.rooms} currentTime={{primaryHour, secondHour, date}} filter={this.state.filter}/>
 				</div>}
 				{this.state.data && !this.state.data.rooms &&

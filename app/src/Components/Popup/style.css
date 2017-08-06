@@ -1,0 +1,62 @@
+.popupContainer{
+	position: fixed;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0,0,0, 0.4);
+	z-index: 3;
+}
+
+.popup{
+	width: 50%;
+	height: 30%;
+	background-color: white;
+	border-radius: 15px;
+}
+
+.textPopup{
+	line-height: 20px;
+	text-align: center;
+	height: 70%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.roomName, .textHour{
+	font-weight: 600;
+}
+
+.bottomLine{
+	display: flex;
+	justify-content: space-around;
+
+}
+
+.yesButton, .noButton {
+	width: 90px;
+	height: 30px;
+	margin: 5px;
+	box-shadow: 1px 1px 5px;
+	border-radius: 10px;
+	text-align: center;
+	line-height: 30px;
+}
+
+.yesButton{
+	background-color: #66BB6A;
+	font-weight: 600;
+
+}
+
+.noButton{
+	background-color: #F44336;
+	font-weight: 600;
+}
+
+.noButton:hover, .yesButton:hover{
+	cursor: pointer;
+}

@@ -21,7 +21,6 @@ class FiltersMenu extends Component {
 			const { selectedDate } = this.props;
 			this.setState({secondBookingHourStart: this.timePicker(selectedDate) + 1, secondBookingHour: this.timePicker(selectedDate) + 1} ,() =>{
 				this.props.getHours(this.timePicker(), this.state.secondBookingHour)
-
 			})
 		}
 
@@ -72,7 +71,7 @@ class FiltersMenu extends Component {
 	}
 
 	secondSelectCreator = (time) => {
-		console.log("SECN TIME CREATOR",time);
+		// console.log("SECN TIME CREATOR",time);
 		const timeArray = [];
 		for (let i = time; i <= 20; i++){
 		 	timeArray.push(<option key={i} value={i} >{i}H</option>)
@@ -99,27 +98,37 @@ class FiltersMenu extends Component {
 
 
 
+
 	render(){
-		const {filters, onClick, getDate, selectedDate} = this.props
+		const {filters, onClick, getDate, selectedDate, onRangeChange, maxCapacity, minCapacity, currentCapacity} = this.props
 		const firstSelect = this.firstSelectCreator(selectedDate);
 		const secondSelect = this.secondSelectCreator(this.state.secondBookingHourStart);
 	return(
 		<div className="filtersMenu">
 			<div className="filtersMenuTitle">
-				<p>BOOK A ROOM</p>
+				<p>Filtres</p>
 				<form type="submit">
 					<InputDate getDate={getDate}/>
-					<div>
-						<select id="primaryHour" onChange={this.handleChangeSecondTimeSelector} >
+					<div className="hourPicker">
+
+						<select id="primaryHour" onChange={this.handleChangeSecondTimeSelector}>
 							{firstSelect.map((time) => time)}
 						</select>
-						a
-						{this.state.secondExist && <select id="secondHour" onChange={this.handleSecondTimeSelector}>
-						 {secondSelect.map((time) => time)}
-						</select>}
+						<p>A</p>
+
+						{this.state.secondExist &&
+							<select id="secondHour" onChange={this.handleSecondTimeSelector}>
+						 		{secondSelect.map((time) => time)}
+							</select>}
 					</div>
 					{this.filterCreator(filters, onClick)}
-					<input type="submit"/>
+
+					<div className="capacity">
+						<div>Capacité Salle</div>
+						<input type="range" id="range" onChange={onRangeChange} min={minCapacity} max={maxCapacity} defaultValue={maxCapacity}/>
+						{currentCapacity}
+					</div>
+					{/* <input type="number" min={this.minCapacity()} max={this.maxCapacity()}></input> */}
 				</form>
 			</div>
 	</div>)}};
@@ -130,6 +139,10 @@ FiltersMenu.propTypes = {
 	getHours: PropTypes.func,
 	getDate: PropTypes.func,
 	selectedDate: PropTypes.string,
+	onRangeChange: PropTypes.func,
+	minCapacity: PropTypes.number,
+	maxCapacity: PropTypes.number,
+	currentCapacity: PropTypes.number,
 }
 
 export default FiltersMenu;

@@ -9,20 +9,36 @@
 	text-align: center;
 }
 
+.hourPicker{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
 .choice{
 	display: flex;
+	width: 106%;
 	flex-direction: row;
 	height: 50px;
 	line-height: 50px;
+	font-size: 20px;
 	text-align: center;
 	justify-content: flex-end;
 	align-items: center;
 }
 
 .checkBox{
+	height: 30px;
+	color: white;
 	flex: 3;
 }
 
 .checkBoxTitle{
 	flex: 7;
+}
+
+.inputDate{
+	width: 90%;
+	height: 50px;
+	font-size: 25px;
 }

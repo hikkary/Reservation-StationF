@@ -71,11 +71,20 @@ const isBooked = (room, currentTime) => {
 		}
 }
 
+const capacityFilter = (room,capacity) => {
+	if(room.capacity > capacity){
+		return false;
+	}
+}
+
 const filterRooms = (room, filter, currentTime) =>{
 	// console.log(room);
 	// console.log(currentTime);
+	console.log(filter.capacity);
+	console.log(room);
 	if(room.name.toLowerCase().indexOf(filter.name) === -1) return false;
 	if(equipmentsCheck(room, filter) === false) return false;
+	if(capacityFilter(room, filter.capacity) === false) return false;
 	if(isBooked(room, currentTime) === false) return false;
 	else{
 		return true

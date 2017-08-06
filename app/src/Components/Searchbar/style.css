@@ -14,3 +14,11 @@
 	opacity: 0.8;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 }
+
+@media (max-width: 640px) {
+	.searchInput{
+		width: 100%;
+		font-size: 30px;
+		text-align: center;
+	}
+}
