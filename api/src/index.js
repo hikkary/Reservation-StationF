@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
+import path from 'path';
 import bodyParser from 'body-parser';
 import { getRooms, newBook } from './rooms';
 
@@ -17,8 +18,10 @@ app
 	.use(cors())
 	.use(bodyParser.urlencoded({ extended: false }))
 	.use(bodyParser.json())
-	.use(roomsRouter);
+	.use(roomsRouter)
+	.use(express.static(path.resolve(__dirname, 'build')));
 
+app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'build', 'index.html')));
 app.listen(8080, () => {
 	console.log('App Listening on Port 8080');
 })

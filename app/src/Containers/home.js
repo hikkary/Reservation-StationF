@@ -149,7 +149,6 @@ class Home extends Component {
 
 		// Update the capacity filter
 		onRangeChange = (range) =>{
-			console.log('Range');
 			this.setState({filter: {...this.state.filter, capacity: Number(range.target.value)}})
 		}
 

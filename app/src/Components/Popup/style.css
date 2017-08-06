@@ -9,6 +9,7 @@
 	z-index: 3;
 }
 
+
 .popup{
 	width: 50%;
 	height: 30%;
@@ -16,9 +17,14 @@
 	border-radius: 15px;
 }
 
+@media (max-width: 640px) {
+	.popup {
+		width: 80%;
+
+	}
+}
 .animation{
 	height: 70%;
-	background-image: url('../../ressources/pictures/validation.png');
 	background-size: 25%;
 	background-repeat: no-repeat;
 	background-position: 100% 100% ;

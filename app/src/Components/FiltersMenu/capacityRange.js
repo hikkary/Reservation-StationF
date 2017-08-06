@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const CapacityRange = ({currentCapacity, onRangeChange, minCapacity, maxCapacity, title }) => (
 	<div className="capacity">
-		<div>{title}</div>
+		<div className="capacityTitle">{title}</div>
 		<input type="range" id="range" onChange={onRangeChange} min={minCapacity} max={maxCapacity} defaultValue={maxCapacity}/>
 		{currentCapacity && currentCapacity }
 		{!currentCapacity && maxCapacity}

@@ -44,5 +44,21 @@
 }
 
 .capacity {
+	margin-top: 15px;
 	width: 100%;
+}
+
+.capacity input{
+	width: 90%;
+}
+
+.capacityTitle {
+	opacity: 0.5;
+}
+
+@media (max-width: 640px) {
+	.capacity input{
+		width: 90%;
+		margin-bottom: 15px;
+	}
 }
