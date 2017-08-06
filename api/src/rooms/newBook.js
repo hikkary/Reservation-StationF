@@ -142,20 +142,39 @@ const checkDateRequest = (request) => {
 	return true
 }
 
+const checkIfRoomExists = (bookRequest) =>{
+	const isRoomExists = data.rooms.map((room) => {
+		if(room.name === bookRequest.roomName){
+			return true
+		}
+		return null;
+	})
+	_.pull(isRoomExists, null)
+	console.log("Room ?",isRoomExists);
+	if(!isRoomExists[0]) return false;
+	return true
+}
+
 const newBook = (req, res) => {
 	const { bookRequest } = req.body;
+	if(!bookRequest) return res.send({ status: 400, statusText: 'Bad Request'});
+	// console.log("=================================");
+	// console.log("bookRequest", req.body);
+	// console.log("=================================");
 	const { error } = Joi.validate(bookRequest, RoomBooking, { abortEarly: false });
   if (error) {
-		console.log('error ON REQUEST', error);
-     return res.send({ status: 400, statusText: 'Bad Request', data: data });
+		// console.log('error ON REQUEST', error);
+     return res.status(400).send({error: 'Bad Request', data: data });
   }
 
 	// Creer Schema Joi
 	//Verifier que la date est ok, regle : date inferieur a date actuelle est horaire inferieur a horaire actuelle
 	// console.log(req.body.bookRequest);
-	if (checkDateRequest(bookRequest) === false) return res.send({ status: 400, statusText: 'Bad Date', data: data });
-	if (checkBookRequest(bookRequest) === false) return res.send({ status: 409, statusText: 'Conflict, reservation Impossible', data: data });
+	if (checkIfRoomExists(bookRequest) === false) return res.status(422).send({error: 'Bad Request, Room Does not exists', data: data});
+	if (checkDateRequest(bookRequest) === false) return res.status(422).send({error: 'The date is not Correct', data: data });
+	if (checkBookRequest(bookRequest) === false) return res.status(409).send({error: 'Conflict, reservation Impossible', data: data });
 	else {
+		// console.log('TOUT EST OK');
 		const newData = insertNewBook(bookRequest);
 		const path = process.cwd();
 		fs.writeFile(`${path}/src/data/rooms.json`, JSON.stringify(newData), (err) => {

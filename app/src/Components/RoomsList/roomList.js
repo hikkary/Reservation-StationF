@@ -71,7 +71,8 @@ const isBooked = (room, currentTime) => {
 		}
 }
 
-const capacityFilter = (room,capacity) => {
+const capacityFilter = (room, capacity) => {
+	if(capacity === null){ return }
 	if(room.capacity > capacity){
 		return false;
 	}
@@ -80,8 +81,8 @@ const capacityFilter = (room,capacity) => {
 const filterRooms = (room, filter, currentTime) =>{
 	// console.log(room);
 	// console.log(currentTime);
-	console.log(filter.capacity);
-	console.log(room);
+	// console.log(filter.capacity);
+	// console.log(room);
 	if(room.name.toLowerCase().indexOf(filter.name) === -1) return false;
 	if(equipmentsCheck(room, filter) === false) return false;
 	if(capacityFilter(room, filter.capacity) === false) return false;
@@ -95,8 +96,8 @@ const RoomsList = ({rooms, filter, onClick, currentTime}) => (
 	<div className="roomsList">
 		{rooms.map( (room, key)=>{
 			if(filterRooms(room, filter, currentTime))
-				return(<Room onClick={onClick} room={room} key={key}/>)
-			return null
+				return(<Room onClick={onClick} room={room} key={key} css="room"/>)
+			return null;
 		}
 		)}
 	</div>

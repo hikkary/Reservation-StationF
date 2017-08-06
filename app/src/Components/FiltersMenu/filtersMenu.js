@@ -11,8 +11,6 @@ import './style.css';
 class FiltersMenu extends Component {
 
 	state = {
-		primaryBookingHour: 0,
-		secondBookingHour: 0,
 		secondBookingHourStart: 0,
 		secondExist: true,
 	}
@@ -20,7 +18,7 @@ class FiltersMenu extends Component {
 		componentDidMount(){
 			const { selectedDate } = this.props;
 			this.setState({secondBookingHourStart: this.timePicker(selectedDate) + 1, secondBookingHour: this.timePicker(selectedDate) + 1} ,() =>{
-				this.props.getHours(this.timePicker(), this.state.secondBookingHour)
+				this.props.getHours(this.timePicker(selectedDate), this.state.secondBookingHour)
 			})
 		}
 
@@ -49,10 +47,12 @@ class FiltersMenu extends Component {
 			const whatHourIsIt = moment().format('HH')
 			const whatDayIsIt = moment().format('YYYY-MM-DD')
 			// console.log(whatHourIsIt);
-			// console.log(selectedDate);
-			// console.log(whatDayIsIt);
+			console.log('selectedDate',selectedDate);
+			console.log(whatDayIsIt);
 			// console.log(moment(whatDayIsIt, "YYYY-MM-DD").fromNow());
+			if (!selectedDate) return
 			if(Number(whatHourIsIt) >= 18 || Number(whatHourIsIt) < 8 || selectedDate !== whatDayIsIt ){
+						console.log("BAD PATH");
 						return 8;
 			} else {
 				return Number(moment().add('1', 'hours').format('HH'));
@@ -126,7 +126,8 @@ class FiltersMenu extends Component {
 					<div className="capacity">
 						<div>Capacité Salle</div>
 						<input type="range" id="range" onChange={onRangeChange} min={minCapacity} max={maxCapacity} defaultValue={maxCapacity}/>
-						{currentCapacity}
+						{currentCapacity && currentCapacity }
+						{!currentCapacity && maxCapacity}
 					</div>
 					{/* <input type="number" min={this.minCapacity()} max={this.maxCapacity()}></input> */}
 				</form>

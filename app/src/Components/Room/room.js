@@ -17,8 +17,8 @@ const listEquipment = (equipements) => {
 	return(stringEquipments || EQUIPMENT);
 }
 
-const Room = ({room, onClick}) =>(
-	<div className="room">
+const Room = ({room, onClick, css}) =>(
+		<div className={css}>
 		<div className="pictureRoom"></div>
 		<div className="infoRoom">
 			<p className="roomTitle">{room.name}</p>
@@ -35,6 +35,7 @@ const Room = ({room, onClick}) =>(
 Room.propTypes = {
 	room: PropTypes.object,
 	onClick: PropTypes.func,
+	css: PropTypes.string,
 }
 
 export default Room;

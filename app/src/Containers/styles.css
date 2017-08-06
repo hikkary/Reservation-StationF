@@ -9,17 +9,17 @@
 	display: flex;
 	flex: 1;
 	height: auto;
-	background-color: green;
 }
+
 @media (max-width: 640px) {
 	.rooms{
-		/*flex-wrap: wrap;*/
 		flex-direction: column;
 	}
 	.filtersMenu{
 		width: 100%
 	}
 }
+
 #primaryHour, #secondHour{
 	height: 50px;
 	width: 30%;

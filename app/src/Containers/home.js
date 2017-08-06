@@ -9,7 +9,6 @@ import { Searchbar } from '../Components/Searchbar';
 import { FiltersMenu } from '../Components/FiltersMenu';
 import { RoomsList } from '../Components/RoomsList';
 import _ from 'lodash';
-// import data from '../Data/rooms.json';
 import './styles.css';
 
 class Home extends Component {
@@ -20,22 +19,23 @@ class Home extends Component {
 		date: null,
 		roomName: null,
 		popupExists: false,
+		popupValidate: false,
+		popupErrorExists: false,
 		filter:{
 			name:'',
 			equipments:[],
-			capacity: 99,
+			capacity: null,
 		}
 	}
 
 	componentDidMount(){
 		this.getDateOnLoad();
-		axios.get('http://localhost:8080/api/rooms').then(({data}) => {
-			console.log(data);
-			this.setState({data, capacity: this.maxCapacity()}, ()=>{
 
+		// Get Rooms from node
+		axios.get('http://localhost:8080/api/rooms').then(({data}) => {
+			this.setState({data, capacity: this.maxCapacity()}, ()=>{
 			})
 		})
-
 	}
 
 	// Activate when a CheckBox is clicked
@@ -53,135 +53,103 @@ class Home extends Component {
 					return true
 			})
 		}
-		this.setState({filter: {...this.state.filter, equipments: newFilter}}, () => {
-			console.log(this.state.filter);
-		})
+		//update equipments filtering
+		this.setState({filter: {...this.state.filter, equipments: newFilter}})
 	}
 
 		handleSearchInput = (text) => {
-			this.setState({filter: {...this.state.filter, name: text.target.value}}, ()=>{
-				console.log(this.state.filter.name);
-			})
-		}
-
-		handleTime = (time) =>{
-			// console.log('ON CHAANGE',time.target.value);
-			// console.log('ON CHAANGE',time.target.id);
-			// this.setState({[time.target.id]: time.target.value},() => {
-			// 	console.log(this.state);
-			// })
+			// Update Room name filtering
+			this.setState({filter: {...this.state.filter, name: text.target.value.toLowerCase()}});
 		}
 
 		getHours = (primaryHour = this.state.primaryHour, secondHour = this.state.secondHour) => {
-			// console.log('secondHour',secondHour);
-			// console.log('primaryHour',primaryHour);
-			this.setState({primaryHour, secondHour}, () => {
-				console.log(this.state);
-			})
+			// Update Time Filtering
+			this.setState({primaryHour, secondHour});
 		}
 
 		todayOrTommorow = () => {
 			const whatHourIsIt = moment().format('HH');
-			// console.log('what ', whatHourIsIt);
-			if(Number(whatHourIsIt) >= 18){ // after 18h we cannot book for the present day
-				// console.log('day after');
+			if(Number(whatHourIsIt) >= 18){ // after 18h the default Date is tomorrow
 				return moment().add('1', 'days').format('YYYY-MM-DD');
 			} else { // else we can book the present day
-				// console.log('this day');
-
 				return moment().format('YYYY-MM-DD');
 			}
 		}
 
 		getDateOnLoad = () => {
-			this.setState({date: this.todayOrTommorow()}, ()=>{
-				console.log('date', this.state);
-			})
+			// get The correct Date
+			this.setState({date: this.todayOrTommorow()})
 		}
 
 		getDate = (time) =>{
-			console.log(time.target.value);
-			this.setState({date: time.target.value}, () =>{
-				console.log(this.state);
-			})
+			// Get date on Selector Change
+			this.setState({date: time.target.value})
 		}
-
-		createBookObject = (book) => {
-			const { primaryHour, secondHour, date, roomName} = book;
-			if (!primaryHour || !secondHour || !date || !roomName) return false;
-			const bookObject = {
-				primaryHour,
-				secondHour,
-				date,
-				roomName,
-				user: 'Roger',
-			};
-			console.log('Book object',bookObject);
-			return bookObject;
-		}
-
 
 		newBook = () =>{
 
-				axios({
-					method: 'PUT',
-					url: 'http://localhost:8080/api/rooms',
-					data: {
-					 bookRequest: {
-						primaryHour: this.state.primaryHour,
-						secondHour: this.state.secondHour,
-						date: this.state.date,
-						roomName: this.state.roomName,
-					}}
-				}).then((result)=> {
-					console.log(result);
-					//Gerer les message d'erreurs
-					this.setState({data: {rooms: result.data.data.rooms}, popupExists: false}, () => {
-						console.log(this.state.data);
-					});
+			axios({
+				method: 'PUT',
+				url: 'http://localhost:8080/api/rooms',
+				validateStatus : (status) =>{
+				return status >= 200 && status < 500;
+				},
+				data: {
+				 bookRequest: {
+					primaryHour: this.state.primaryHour,
+					secondHour: this.state.secondHour,
+					date: this.state.date,
+					roomName: this.state.roomName,
+				}}
+			}).then((result)=> {
+					// Error handling
+					if(result.status === 422 || result.status === 409 || result.status === 400) {
+						const sentence = <div className="textPopup"> {result.data.error}</div>
+						this.setState({
+							sentence,
+							popupErrorExists: true, // Activate the error popup
+						})
+					}
+					// updating Room Data, DEactivate Book Popup, Activate Validate Popup
+					this.setState({data: {rooms: result.data.data.rooms}, popupExists: false, popupValidate: true});
 				})
 		}
 
 		cancelPopup = () => {
-			this.setState({popupExists : false})
+			// Cancel all popups
+			this.setState({popupExists : false, popupErrorExists: false, popupValidate: false})
 		}
 
 		popupBook = (room) =>{
-			// console.log(room.target.id);
+			// Popup Book Creation, create the booking sentence as well
 			this.setState({roomName: room.target.id}, () =>{
 				const sentence = <div className="textPopup">Voulez vous Reserver&nbsp;<div className="roomName"> {this.state.roomName}&nbsp;</div> de&nbsp;<div className="textHour">{this.state.primaryHour}H&nbsp;</div> a&nbsp;<div className="textHour">{this.state.secondHour}H&nbsp;</div>  le&nbsp;<div className="textHour">{this.state.date}</div> ?</div>
 				this.setState({popupExists: true, sentence})
-				// console.log(this.state);
-				// console.log(JSON.stringify({ rooms: this.state.data.rooms}));
 			})
 		}
 
 		minCapacity = () =>{
+			// return the lowest room capacity from the rooms data
 			if(this.state.data){
-			const max = this.state.data.rooms.map((room) => room.capacity)
-			_.sortBy(max)
-			return Number(_.head(max))
+				const max = this.state.data.rooms.map((room) => room.capacity)
+				_.sortBy(max)
+				return Number(_.head(max))
 			}
 			return 0
 		}
 
 		onRangeChange = (range) =>{
-			// console.log(range.target.value);
+			// Update the capacity filter
 			this.setState({filter: {...this.state.filter, capacity: Number(range.target.value)}})
 		}
 
-		// initialRangeChange = (range) =>{
-		// 	this.setState({capacity: this.maxCapacity()})
-		// }
-
 		maxCapacity = () =>{
+			// return the highest room capacity from the rooms data
 			if(this.state.data){
-			const max = this.state.data.rooms.map((room) => room.capacity)
-			_.sortBy(max)
-			return Number(_.last(max))
+				const max = this.state.data.rooms.map((room) => room.capacity)
+				_.sortBy(max)
+				return Number(_.last(max))
 			}
-			// this.maxCapacity()
-			// return 0;
 		}
 
 
@@ -189,17 +157,24 @@ class Home extends Component {
 		const { primaryHour, secondHour, date} = this.state;
 		return(
 			<div className="home">
+				{ this.state.popupValidate &&
+					<Popup validate={this.cancelPopup} cancelPopup={this.cancelPopup} noButton={false}  animation={true}/>
+				}
+				{ this.state.popupErrorExists &&
+					<Popup validate={this.cancelPopup} cancelPopup={this.cancelPopup} sentence={this.state.sentence}/>
+				}
 				{ this.state.popupExists &&
-					<Popup newBook={this.newBook} cancelPopup={this.cancelPopup} sentence={this.state.sentence}/>
-			}
+					<Popup validate={this.newBook} cancelPopup={this.cancelPopup} sentence={this.state.sentence}/>
+				}
 			<Header />
 			<Banner />
 			<Searchbar onKeyUp={this.handleSearchInput.bind(this)}/>
 				{this.state.data && this.state.data.rooms &&
 					<div className="rooms">
-					<FiltersMenu filters={this.state.data.rooms} selectedDate={this.state.date} getHours={this.getHours} getDate={this.getDate}  onClick={this.handleClickCheckBox} maxCapacity={this.maxCapacity()} minCapacity={this.minCapacity()} onRangeChange={this.onRangeChange} currentCapacity={this.state.filter.capacity} />
-					<RoomsList onClick={this.popupBook} rooms={this.state.data.rooms} currentTime={{primaryHour, secondHour, date}} filter={this.state.filter}/>
-				</div>}
+						<FiltersMenu filters={this.state.data.rooms} selectedDate={this.state.date} getHours={this.getHours} getDate={this.getDate}  onClick={this.handleClickCheckBox} maxCapacity={this.maxCapacity()} minCapacity={this.minCapacity()} onRangeChange={this.onRangeChange} currentCapacity={this.state.filter.capacity} />
+						<RoomsList onClick={this.popupBook} rooms={this.state.data.rooms} currentTime={{primaryHour, secondHour, date}} filter={this.state.filter}/>
+					</div>
+				}
 				{this.state.data && !this.state.data.rooms &&
 					 <p className="noRooms">No rooms Found</p>
 				}
