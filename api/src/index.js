@@ -23,5 +23,5 @@ app
 
 app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'build', 'index.html')));
 app.listen(8080, () => {
-	console.log('App Listening on Port 8080');
+	console.log('Application Availabe at http://localhost:8080/');
 })
