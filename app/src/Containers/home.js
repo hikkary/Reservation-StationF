@@ -30,11 +30,20 @@ class Home extends Component {
 
 	componentDidMount(){
 		this.getDateOnLoad();
-
 		// Get Rooms from node
-		axios.get('http://localhost:8080/api/rooms').then(({data}) => {
-			this.setState({data, capacity: this.maxCapacity()}, ()=>{
-			})
+		axios({
+			method: 'GET',
+			url: 'http://localhost:8080/api/rooms',
+			validateStatus : (status) =>{
+			return status >= 200 && status < 500;
+			}
+		}).then(({data, status}) => {
+				if (status === 404){
+					this.setState({data: {}});
+					return;
+				} else {
+				this.setState({data, capacity: this.maxCapacity()});
+			}
 		})
 	}
 
@@ -138,8 +147,9 @@ class Home extends Component {
 			return 0
 		}
 
+		// Update the capacity filter
 		onRangeChange = (range) =>{
-			// Update the capacity filter
+			console.log('Range');
 			this.setState({filter: {...this.state.filter, capacity: Number(range.target.value)}})
 		}
 
@@ -174,9 +184,6 @@ class Home extends Component {
 						<FiltersMenu filters={this.state.data.rooms} selectedDate={this.state.date} getHours={this.getHours} getDate={this.getDate}  onClick={this.handleClickCheckBox} maxCapacity={this.maxCapacity()} minCapacity={this.minCapacity()} onRangeChange={this.onRangeChange} currentCapacity={this.state.filter.capacity} />
 						<RoomsList onClick={this.popupBook} rooms={this.state.data.rooms} currentTime={{primaryHour, secondHour, date}} filter={this.state.filter}/>
 					</div>
-				}
-				{this.state.data && !this.state.data.rooms &&
-					 <p className="noRooms">No rooms Found</p>
 				}
 		  </div>
 		)

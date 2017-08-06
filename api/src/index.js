@@ -7,7 +7,7 @@ import { getRooms, newBook } from './rooms';
 const app = express();
 const roomsRouter = express.Router('/api/rooms');
 
-
+// The Router to get rooms and book
 roomsRouter
 	.get('/api/rooms', getRooms)
 	.put('/api/rooms', newBook)

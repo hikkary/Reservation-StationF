@@ -7,6 +7,8 @@ const CAPACITY = "places";
 const BOOK = "Reserver";
 const EQUIPMENT = 'Pas d\'equipements';
 
+
+// return a string to display for an array of equipements
 const listEquipment = (equipements) => {
 	let stringEquipments = '';
 	 equipements.forEach((equipment) =>{

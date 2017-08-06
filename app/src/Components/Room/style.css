@@ -1,6 +1,5 @@
 
 .room{
-	/*background-color: blue;*/
 	background-color: #f9f9f9;
 	display:flex;
 	flex-direction: row;
@@ -9,7 +8,6 @@
 }
 
 .pictureRoom{
-	background-color: red;
 	flex: 4;
 	background: url('../../ressources/pictures/sr1.jpg');
 	background-size: cover;

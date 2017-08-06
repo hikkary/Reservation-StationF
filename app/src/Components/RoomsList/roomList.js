@@ -5,64 +5,48 @@ import _ from 'lodash';
 
 import './style.css';
 
+
+// Check if the equipments on the room matches equipments on the user's filter
 const equipmentsCheck = (room, filter) => {
-	if(filter.equipments.length === 0) return true
-	let checkArray = filter.equipments.map((filterEquipment) =>{
-		// console.log('filter',filterEquipment);
+	if(filter.equipments.length === 0) return true;
+	let checkArray = filter.equipments.map((filterEquipment) =>{ //create an Array of matching equipments
 			return room.equipements.map((roomEquipment) => {
-				// console.log('room',roomEquipment);
 				if (filterEquipment.name === roomEquipment.name) return roomEquipment
 				return null;
-			})
-	} )
+		})
+	})
 	checkArray = _.flattenDepth(checkArray)
 	_.pull(checkArray, null)
-	//
-	// console.log(filter.equipments);
-	// console.log(room.equipements);
-	// console.log(' CHECK',checkArray);
-	//
-	// console.log(checkArray.length);
-	// console.log(filter.equipments.length);
 	if (checkArray.length < filter.equipments.length) return false
-
+	// if The numbers of equipments matching in the room is less than the numbers of equipments on
+	// the filter then the room is not displayed
 	return true;
-		// room.
-	// console.log(filter.equipments);
-	// console.log(room.equipements);
-	// console.log(filter.equipments.length);
-	// console.log(room.equipements.length);
 }
+
+
 const isBooked = (room, currentTime) => {
-	// console.log(room);
-	// console.log(currentTime);
 		if(currentTime.primaryHour && currentTime.secondHour && currentTime.date){
-			if (!room.book) return true;
+			if (!room.book) return true; // if the key book does not exist then there is no reservation yet
 			else if(room.book){
+				// a set of rules checking if another booking is on the range of time that the users have choosen
+				// the room is not displayed if the room is already book in the range of time
 				let checkIfBookedTab = room.book.filter((oneBook) => {
-					// console.log('ONE BOOOOOOK',oneBook);
 					if(oneBook.date === currentTime.date){
-						// console.log('sameDate');
 						if(oneBook.primaryHour > currentTime.primaryHour && oneBook.primaryHour < currentTime.secondHour){
-							// console.log(' SAME hour');
 							return true;
 						}
 						if(oneBook.secondHour > currentTime.primaryHour && oneBook.secondHour < currentTime.secondHour){
-							// console.log(' SAME hour 2');
 							return true;
 						}
 						if(oneBook.primaryHour === currentTime.primaryHour && oneBook.secondHour === currentTime.secondHour){
-							// console.log(' SAME hour 3');
 							return true;
 						}
 						if(oneBook.primaryHour <= currentTime.primaryHour && oneBook.secondHour >= currentTime.secondHour){
-							// console.log(' SAME hour 3');
 							return true;
 						}
 					}
 					return false
 				})
-				// console.log('CHECK TAB',checkIfBookedTab);
 				if(checkIfBookedTab.length !== 0) return false;
 				else { return true }
 			}
@@ -71,6 +55,7 @@ const isBooked = (room, currentTime) => {
 		}
 }
 
+// Filter the room with the capacity choosen by the user
 const capacityFilter = (room, capacity) => {
 	if(capacity === null){ return }
 	if(room.capacity > capacity){
@@ -79,11 +64,7 @@ const capacityFilter = (room, capacity) => {
 }
 
 const filterRooms = (room, filter, currentTime) =>{
-	// console.log(room);
-	// console.log(currentTime);
-	// console.log(filter.capacity);
-	// console.log(room);
-	if(room.name.toLowerCase().indexOf(filter.name) === -1) return false;
+	if(room.name.toLowerCase().indexOf(filter.name) === -1) return false; // Filter the rooms by name
 	if(equipmentsCheck(room, filter) === false) return false;
 	if(capacityFilter(room, filter.capacity) === false) return false;
 	if(isBooked(room, currentTime) === false) return false;
@@ -100,6 +81,7 @@ const RoomsList = ({rooms, filter, onClick, currentTime}) => (
 			return null;
 		}
 		)}
+
 	</div>
 )
 

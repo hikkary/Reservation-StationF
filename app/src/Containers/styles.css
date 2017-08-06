@@ -5,10 +5,17 @@
 }
 
 .rooms{
-	margin-top: 5px;
 	display: flex;
 	flex: 1;
 	height: auto;
+
+}
+
+.noRooms{
+	z-index: 1;
+	text-align: center;
+	width: 70%;
+	margin-top: 15px;
 }
 
 @media (max-width: 640px) {

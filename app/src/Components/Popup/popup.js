@@ -20,8 +20,8 @@ Popup.propTypes = {
 	validate: PropTypes.func,
 	cancelPopup: PropTypes.func,
 	sentence: PropTypes.object,
-	yesButton: PropTypes.boolean,
-	noButton: PropTypes.boolean,
+	yesButton: PropTypes.bool,
+	noButton: PropTypes.bool,
 }
 
 export default Popup;
