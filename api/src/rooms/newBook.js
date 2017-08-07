@@ -32,12 +32,9 @@ const isRoomBooked = (formerBook, newBook) => {
 			}
 }
 
-
-
 const checkBookRequest = (request) => {
 	const isBooked = data.rooms.map((room) => { // We go through all the rooms
 		if(room.name === request.roomName){ // we look for the room we want to book
-			console.log('TRUE');
 			if(!room.book) { // if the room does not have a booking key we return true
 				return true;
 			} else if (room.book){ // if there are books for the room
@@ -114,7 +111,6 @@ const checkIfRoomExists = (bookRequest) =>{
 		return null;
 	})
 	_.pull(isRoomExists, null)
-	console.log("Room ?",isRoomExists);
 	if(!isRoomExists[0]) return false;
 	return true
 }
