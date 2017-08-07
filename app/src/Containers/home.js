@@ -170,7 +170,7 @@ class Home extends Component {
 					<Popup validate={this.cancelPopup} cancelPopup={this.cancelPopup} noButton={false}  animation={true}/>
 				}
 				{ this.state.popupErrorExists &&
-					<Popup validate={this.cancelPopup} cancelPopup={this.cancelPopup} sentence={this.state.sentence}/>
+					<Popup validate={this.cancelPopup} cancelPopup={this.cancelPopup} yesButton={false} sentence={this.state.sentence}/>
 				}
 				{ this.state.popupExists &&
 					<Popup validate={this.newBook} cancelPopup={this.cancelPopup} sentence={this.state.sentence}/>

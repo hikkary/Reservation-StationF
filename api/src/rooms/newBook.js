@@ -6,107 +6,75 @@ import { RoomBooking } from '../joi'
 
 import data from '../data/rooms.json';
 
-const checkDate = () =>{
-
-}
-
+// check if the room is already booked
 const isRoomBooked = (formerBook, newBook) => {
-	// console.log(room);
-	// console.log(currentTime);
 			if(formerBook){
 				let checkIfBookedTab = formerBook.filter((oneBook) => {
-					// console.log('ONE BOOOOOOK',oneBook);
-						// console.log('sameDate');
 						if(oneBook.primaryHour > newBook.primaryHour && oneBook.primaryHour < newBook.secondHour){
-							// console.log(' SAME hour');
 							return true;
 						}
 						if(oneBook.secondHour > newBook.primaryHour && oneBook.secondHour < newBook.secondHour){
-							// console.log(' SAME hour 2');
 							return true;
 						}
 						if(oneBook.primaryHour === newBook.primaryHour && oneBook.secondHour === newBook.secondHour){
-							// console.log(' SAME hour 3');
 							return true;
 						}
 						if(oneBook.primaryHour <= newBook.primaryHour && oneBook.secondHour >= newBook.secondHour){
-							// console.log(' SAME hour 3');
 							return true;
 						}
 					return false
 				})
-				console.log('CHECK TAB',checkIfBookedTab);
 				if(checkIfBookedTab.length !== 0){
-					console.log("Reservation ce chevauche")
 					return false;
 				} else {
-					console.log('pas de Reservation');
 					return true;
 				}
-
-				// if(checkIfBookedTab.length !== 0) return false;
-				// else { return true }
 			}
-
 }
 
 
 
 const checkBookRequest = (request) => {
-	// console.log('rooms',data.rooms);
-	// console.log('request',request);
 	const isBooked = data.rooms.map((room) => { // We go through all the rooms
 		if(room.name === request.roomName){ // we look for the room we want to book
 			console.log('TRUE');
-			if(!room.book) { // if the room does not have a booking key we create it
-				// room = {...room, book: [request]}
+			if(!room.book) { // if the room does not have a booking key we return true
 				return true;
 			} else if (room.book){ // if there are books for the room
 					const isBookAtDate = room.book.map((oneBook) =>{ // we go through all the booking
 						if(oneBook.date === request.date){ // we check if there is already a book for the requested date
-							console.log('Meme date');
 							return oneBook // if book we return it to inspect it later
 						} else {
-							console.log('pas meme dates');
 							return null; // else we return null
 						}
 					})
-					// console.log('Avant DATE ?', isBookAtDate);
 
 					_.pull(isBookAtDate, null); // thanks to lodash we remove all the null case on the array
 
 					if(isBookAtDate.length === 0){ // if there is not any book remaining, it means no book have been made for the requested date
-						console.log('PAs de Reservation a cette date');
 						return true
 					} else { // else it means we have a book for the day and we have to check if our request is possible
-						if (isRoomBooked(isBookAtDate, request) === false){
+						if (isRoomBooked(isBookAtDate, request) === false){ //we check the array of book we have gathered;
 							return false;
 						} else {
 							return true;
 						}
 					}
-					// console.log('DATE ?', isBookAtDate);
-					// console.log('DATE ?', isBookAtDate.length);
-
 			}
 		} else {
 			return null;
 		}
-
 	})
 	_.pull(isBooked, null)
-	//
-	// console.log('Reservation ?',isBooked);
-	// console.log('Reservation ?',isBooked.length);
+
 	if(isBooked[0]) {
 		return true;
 	} else {
 		return false;
 	}
-	// inscrire la Reservation dans un fichier
-	// console.log('IS BOOKED', isBooked);
 }
 
+// insert New book into json
 const insertNewBook = (bookRequest) => {
 	const newData = data.rooms.map((room) => {
 		if (room.name === bookRequest.roomName) {
@@ -114,34 +82,30 @@ const insertNewBook = (bookRequest) => {
 					room = {...room, book: []}
 				}
 				room.book.push(bookRequest);
-				// r = {...r, book: bookObject}
 		}
 		return room;
 	})
-
 	return { rooms: newData };
-	// console.log('newData ALLON Y',newData.map((room)=>{
-	// 	console.log(room.book);
-	// }));
 }
 
+// We check if the date and hour given are ok
 const checkDateRequest = (request) => {
 	const whatDayIsIt = moment().format('YYYY-MM-DD');
 	const whatDayIsItUnix = moment(whatDayIsIt).unix();
 	const whatHourIsIt = Number(moment().format('HH'));
 	const requestDateUnix = moment(request.date).unix();
-	// console.log('JOUR, HEURE',whatDayIsIt, whatHourIsIt);
-	// console.log('NUMBER JOUR, HEURE', moment(hier).unix(), Number(whatHourIsIt));
-	if (requestDateUnix < whatDayIsItUnix) return false;
-	if (requestDateUnix - whatDayIsItUnix >= 5184000) return false;
-	if(request.secondHour <= request.primaryHour) return false;
-	if(requestDateUnix === whatDayIsItUnix){
-		if(request.secondHour < whatHourIsIt)  return false;
+	if (requestDateUnix < whatDayIsItUnix) return false; // if the request date is in the past
+	if (requestDateUnix - whatDayIsItUnix >= 5184000) return false; // if the requested date is 2 month in the future
+	if(request.secondHour <= request.primaryHour) return false; // if the secondHour is less than the first hour
+	if(requestDateUnix === whatDayIsItUnix){ // special check if we are booking for the present day
+		if(request.secondHour < whatHourIsIt)  return false; // if one of the hours in range is in the past, we return false
 		if(request.primaryHour < whatHourIsIt) return false;
 	}
 	return true
 }
 
+
+// Check if the name of the requested room exists
 const checkIfRoomExists = (bookRequest) =>{
 	const isRoomExists = data.rooms.map((room) => {
 		if(room.name === bookRequest.roomName){
@@ -155,26 +119,18 @@ const checkIfRoomExists = (bookRequest) =>{
 	return true
 }
 
+// Check the data several times before modifiying the json file
 const newBook = (req, res) => {
 	const { bookRequest } = req.body;
-	if(!bookRequest) return res.send({ status: 400, statusText: 'Bad Request'});
-	// console.log("=================================");
-	// console.log("bookRequest", req.body);
-	// console.log("=================================");
+	if(!bookRequest) return res.status(400).send({statusText: 'Bad Request'});
 	const { error } = Joi.validate(bookRequest, RoomBooking, { abortEarly: false });
   if (error) {
-		// console.log('error ON REQUEST', error);
      return res.status(400).send({error: 'Bad Request', data: data });
   }
-
-	// Creer Schema Joi
-	//Verifier que la date est ok, regle : date inferieur a date actuelle est horaire inferieur a horaire actuelle
-	// console.log(req.body.bookRequest);
 	if (checkIfRoomExists(bookRequest) === false) return res.status(422).send({error: 'Bad Request, Room Does not exists', data: data});
 	if (checkDateRequest(bookRequest) === false) return res.status(422).send({error: 'The date is not Correct', data: data });
 	if (checkBookRequest(bookRequest) === false) return res.status(409).send({error: 'Conflict, reservation Impossible', data: data });
 	else {
-		// console.log('TOUT EST OK');
 		const newData = insertNewBook(bookRequest);
 		const path = process.cwd();
 		fs.writeFile(`${path}/src/data/rooms.json`, JSON.stringify(newData), (err) => {
@@ -183,7 +139,6 @@ const newBook = (req, res) => {
 	    }
 			return res.send({status: 200, statusText: 'File Succesfully Saved', data: newData})
 	});
-	// return res.send('test time')
 	}
 }
 
